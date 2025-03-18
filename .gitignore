@@ -486,3 +486,8 @@ $RECYCLE.BIN/
 # Ignore appsettings files
 Gas.Api/appsettings.Development.json
 Gas.Api/appsettings.json
+
+# SQLite database files
+*.db
+*.db-shm
+*.db-wal
