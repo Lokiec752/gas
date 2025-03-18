@@ -1,0 +1,32 @@
+###
+GET http://localhost:5246/invoices
+
+###
+GET http://localhost:5246/invoices/1
+
+###
+POST http://localhost:5246/invoices
+Content-Type: application/json
+
+{
+  "GasAmount": 1955.54,
+  "Subscription": 12.6,
+  "ConstDistribution": 81.55,
+  "VariableDistribution": 256.39,
+  "Date": "2025-01-01"
+}
+
+###
+PUT http://localhost:5246/invoices/1
+Content-Type: application/json
+
+{
+  "GasAmount": 1955.54,
+  "Subscription": 12.6,
+  "ConstDistribution": 81.55,
+  "VariableDistribution": 256.39,
+  "Date": "2025-01-18"
+}
+
+###
+DELETE http://localhost:5246/invoices/1

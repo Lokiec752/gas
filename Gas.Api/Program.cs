@@ -1,4 +1,5 @@
 using Gas.Api.Data;
+using Gas.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,7 @@ builder.Services.AddSqlite<GasCalculationsDbContext>(connString);
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapInvoiceEndpoints();
 
 await app.MigrateDbAsync();
 
