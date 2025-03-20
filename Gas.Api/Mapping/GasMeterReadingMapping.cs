@@ -11,7 +11,8 @@ public static class GasMeterReadingMapping
       Id: reading.Id,
       Reading: reading.Reading,
       UserId: reading.UserId,
-      Date: reading.Date
+      Date: reading.Date,
+      Type: reading.Type
     );
   }
 
@@ -22,6 +23,7 @@ public static class GasMeterReadingMapping
       Reading = reading.Reading,
       UserId = reading.UserId,
       Date = reading.Date,
+      Type = reading.Type
     };
   }
 
@@ -32,6 +34,7 @@ public static class GasMeterReadingMapping
       Reading = reading.Reading,
       UserId = reading.UserId,
       Date = reading.Date,
+      Type = reading.Type
     };
   }
 
