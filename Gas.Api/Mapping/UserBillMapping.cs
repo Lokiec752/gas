@@ -5,7 +5,7 @@ namespace Gas.Api.Mapping;
 
 public static class UserBillMapping
 {
-  public static UserBillDto toDto(UserBill bill)
+  public static UserBillDto toDto(this UserBill bill)
   {
     return new UserBillDto(
       bill.Id,
@@ -17,7 +17,7 @@ public static class UserBillMapping
     );
   }
 
-  public static UserBill toEntity(CreateUserBillDto bill)
+  public static UserBill toEntity(this CreateUserBillDto bill)
   {
     return new UserBill()
     {
@@ -29,7 +29,7 @@ public static class UserBillMapping
     };
   }
 
-  public static UserBill toEntity(UpdateUserBillDto bill)
+  public static UserBill toEntity(this UpdateUserBillDto bill)
   {
     return new UserBill()
     {

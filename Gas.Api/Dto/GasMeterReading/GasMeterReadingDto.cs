@@ -1,4 +1,4 @@
-using Gas.Api.Constants;
+using Gas.Api.Enums;
 
 namespace Gas.Api.Dto.GasMeterReading;
 
@@ -8,5 +8,5 @@ public record class GasMeterReadingDto
   int Reading,
   int UserId,
   DateOnly Date,
-  MeterReadingTypes Type
+  MeterReadingType Type
 );

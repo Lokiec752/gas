@@ -9,6 +9,9 @@ builder.Services.AddSqlite<GasCalculationsDbContext>(connString);
 var app = builder.Build();
 
 app.MapInvoiceEndpoints();
+app.MapUserEndpoints();
+app.MapUserBillEndpoints();
+app.MapGasMeterReadingsEndpoints();
 
 await app.MigrateDbAsync();
 

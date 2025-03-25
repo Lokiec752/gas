@@ -1,4 +1,4 @@
-using Gas.Api.Constants;
+using Gas.Api.Enums;
 
 namespace Gas.Api.Entity;
 
@@ -9,5 +9,5 @@ public class GasMeterReading
   public int UserId { get; set; }
   public User? User { get; set; }
   public DateOnly Date { get; set; }
-  public required MeterReadingTypes Type { get; set; }
+  public required MeterReadingType Type { get; set; }
 }
