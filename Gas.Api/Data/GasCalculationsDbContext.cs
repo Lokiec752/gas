@@ -1,4 +1,5 @@
 using Gas.Api.Entity;
+using Gas.Api.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gas.Api.Data;
@@ -20,6 +21,10 @@ public class GasCalculationsDbContext(DbContextOptions<GasCalculationsDbContext>
     modelBuilder.Entity<GasMeterReading>()
       .Property(e => e.Type)
       .HasConversion<string>();
+    modelBuilder.Entity<GasMeterReading>().HasData(
+      new { Id = 1, Type = MeterReadingType.Primary, Reading = 703, UserId = 1, Date = new DateOnly(2025, 1, 1) },
+      new { Id = 2, Type = MeterReadingType.Secondary, Reading = 299, UserId = 2, Date = new DateOnly(2025, 1, 1) }
+    );
     modelBuilder.Entity<UserBill>();
   }
 }
