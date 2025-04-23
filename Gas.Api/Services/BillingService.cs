@@ -5,7 +5,6 @@ namespace Gas.Api.Services;
 
 public class BillingService
 {
-  // FIXME: remember about migration
   public UserBillResult CreateUserBill
   (
     Invoice invoice,

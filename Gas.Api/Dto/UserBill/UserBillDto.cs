@@ -5,7 +5,7 @@ public record class UserBillDto
   int Id,
   int UserId,
   int InvoiceId,
-  int PreviousReadingId,
-  int CurrentReadingId,
+  int? PreviousReadingId,
+  int? CurrentReadingId,
   float TotalAmount
 );

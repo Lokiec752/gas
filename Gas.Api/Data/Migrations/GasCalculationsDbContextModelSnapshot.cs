@@ -118,13 +118,13 @@ namespace Gas.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CurrentReadingId")
+                    b.Property<int?>("CurrentReadingId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("InvoiceId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PreviousReadingId")
+                    b.Property<int?>("PreviousReadingId")
                         .HasColumnType("INTEGER");
 
                     b.Property<float>("TotalAmount")
@@ -150,9 +150,7 @@ namespace Gas.Api.Data.Migrations
                 {
                     b.HasOne("Gas.Api.Entity.GasMeterReading", "CurrentReading")
                         .WithMany()
-                        .HasForeignKey("CurrentReadingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CurrentReadingId");
 
                     b.HasOne("Gas.Api.Entity.Invoice", "Invoice")
                         .WithMany()
@@ -162,9 +160,7 @@ namespace Gas.Api.Data.Migrations
 
                     b.HasOne("Gas.Api.Entity.GasMeterReading", "PreviousReading")
                         .WithMany()
-                        .HasForeignKey("PreviousReadingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PreviousReadingId");
 
                     b.HasOne("Gas.Api.Entity.User", "User")
                         .WithMany()

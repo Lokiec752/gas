@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gas.Api.Data.Migrations
 {
     [DbContext(typeof(GasCalculationsDbContext))]
-    [Migration("20250325163220_AddGasMeterReadingEnum")]
-    partial class AddGasMeterReadingEnum
+    [Migration("20250423145053_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,21 +29,31 @@ namespace Gas.Api.Data.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Reading")
+                    b.Property<int>("PrimaryReading")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("SecondaryReading")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Readings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Date = new DateOnly(2024, 12, 1),
+                            PrimaryReading = 0,
+                            SecondaryReading = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Date = new DateOnly(2025, 1, 1),
+                            PrimaryReading = 299,
+                            SecondaryReading = 703
+                        });
                 });
 
             modelBuilder.Entity("Gas.Api.Entity.Invoice", b =>
@@ -78,6 +88,10 @@ namespace Gas.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("MeterReadingType")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -90,11 +104,13 @@ namespace Gas.Api.Data.Migrations
                         new
                         {
                             Id = 1,
+                            MeterReadingType = "Primary",
                             Name = "22E"
                         },
                         new
                         {
                             Id = 2,
+                            MeterReadingType = "Secondary",
                             Name = "22H"
                         });
                 });
@@ -105,13 +121,13 @@ namespace Gas.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CurrentReadingId")
+                    b.Property<int?>("CurrentReadingId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("InvoiceId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("PreviousReadingId")
+                    b.Property<int?>("PreviousReadingId")
                         .HasColumnType("INTEGER");
 
                     b.Property<float>("TotalAmount")
@@ -133,24 +149,11 @@ namespace Gas.Api.Data.Migrations
                     b.ToTable("UserBills");
                 });
 
-            modelBuilder.Entity("Gas.Api.Entity.GasMeterReading", b =>
-                {
-                    b.HasOne("Gas.Api.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Gas.Api.Entity.UserBill", b =>
                 {
                     b.HasOne("Gas.Api.Entity.GasMeterReading", "CurrentReading")
                         .WithMany()
-                        .HasForeignKey("CurrentReadingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CurrentReadingId");
 
                     b.HasOne("Gas.Api.Entity.Invoice", "Invoice")
                         .WithMany()
@@ -160,9 +163,7 @@ namespace Gas.Api.Data.Migrations
 
                     b.HasOne("Gas.Api.Entity.GasMeterReading", "PreviousReading")
                         .WithMany()
-                        .HasForeignKey("PreviousReadingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PreviousReadingId");
 
                     b.HasOne("Gas.Api.Entity.User", "User")
                         .WithMany()
