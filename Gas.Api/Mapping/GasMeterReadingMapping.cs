@@ -5,37 +5,44 @@ namespace Gas.Api.Mapping;
 
 public static class GasMeterReadingMapping
 {
-  public static GasMeterReadingDto toDto(this GasMeterReading reading)
+  public static GasMeterReadingDto ToDto(this GasMeterReading reading)
   {
-    return new GasMeterReadingDto(
-      Id: reading.Id,
-      Reading: reading.Reading,
-      UserId: reading.UserId,
-      Date: reading.Date,
-      Type: reading.Type
+    return new GasMeterReadingDto
+    (
+      reading.Id,
+      reading.PrimaryReading,
+      reading.SecondaryReading,
+      reading.Date
     );
   }
 
-  public static GasMeterReading toEntity(this CreateGasMeterReadingDto reading)
+  public static GasMeterReading ToEntity(this GasMeterReadingDto reading)
   {
     return new GasMeterReading()
     {
-      Reading = reading.Reading,
-      UserId = reading.UserId,
+      PrimaryReading = reading.PrimaryReading,
+      SecondaryReading = reading.SecondaryReading,
       Date = reading.Date,
-      Type = reading.Type
+    };
+  }
+  public static GasMeterReading ToEntity(this CreateGasMeterReadingDto reading)
+  {
+    return new GasMeterReading()
+    {
+      PrimaryReading = reading.PrimaryReading,
+      SecondaryReading = reading.SecondaryReading,
+      Date = reading.Date,
     };
   }
 
-  public static GasMeterReading toEntity(this UpdateGasMeterReadingDto reading, int id)
+  public static GasMeterReading ToEntity(this UpdateGasMeterReadingDto reading, int id)
   {
     return new GasMeterReading()
     {
       Id = id,
-      Reading = reading.Reading,
-      UserId = reading.UserId,
+      PrimaryReading = reading.PrimaryReading,
+      SecondaryReading = reading.SecondaryReading,
       Date = reading.Date,
-      Type = reading.Type
     };
   }
 

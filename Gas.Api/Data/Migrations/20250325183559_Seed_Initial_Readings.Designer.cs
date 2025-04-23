@@ -3,6 +3,7 @@ using System;
 using Gas.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gas.Api.Data.Migrations
 {
     [DbContext(typeof(GasCalculationsDbContext))]
-    partial class GasCalculationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250325183559_Seed_Initial_Readings")]
+    partial class Seed_Initial_Readings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -26,13 +29,19 @@ namespace Gas.Api.Data.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("PrimaryReading")
+                    b.Property<int>("Reading")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("SecondaryReading")
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Readings");
 
@@ -41,15 +50,33 @@ namespace Gas.Api.Data.Migrations
                         {
                             Id = 1,
                             Date = new DateOnly(2024, 12, 1),
-                            PrimaryReading = 0,
-                            SecondaryReading = 0
+                            Reading = 0,
+                            Type = "Primary",
+                            UserId = 1
                         },
                         new
                         {
                             Id = 2,
+                            Date = new DateOnly(2024, 12, 1),
+                            Reading = 0,
+                            Type = "Primary",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
                             Date = new DateOnly(2025, 1, 1),
-                            PrimaryReading = 299,
-                            SecondaryReading = 703
+                            Reading = 703,
+                            Type = "Primary",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Date = new DateOnly(2025, 1, 1),
+                            Reading = 299,
+                            Type = "Secondary",
+                            UserId = 2
                         });
                 });
 
@@ -85,10 +112,6 @@ namespace Gas.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("MeterReadingType")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -101,13 +124,11 @@ namespace Gas.Api.Data.Migrations
                         new
                         {
                             Id = 1,
-                            MeterReadingType = "Primary",
                             Name = "22E"
                         },
                         new
                         {
                             Id = 2,
-                            MeterReadingType = "Secondary",
                             Name = "22H"
                         });
                 });
@@ -144,6 +165,17 @@ namespace Gas.Api.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserBills");
+                });
+
+            modelBuilder.Entity("Gas.Api.Entity.GasMeterReading", b =>
+                {
+                    b.HasOne("Gas.Api.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Gas.Api.Entity.UserBill", b =>

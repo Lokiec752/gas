@@ -17,7 +17,7 @@ public static class InvoiceMapping
     };
   }
 
-    public static Invoice ToEntity(this UpdateInvoiceDto invoice, int id)
+  public static Invoice ToEntity(this UpdateInvoiceDto invoice, int id)
   {
     return new Invoice()
     {

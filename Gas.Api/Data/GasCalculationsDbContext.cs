@@ -14,16 +14,17 @@ public class GasCalculationsDbContext(DbContextOptions<GasCalculationsDbContext>
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     modelBuilder.Entity<Invoice>();
-    modelBuilder.Entity<User>().HasData(
-      new { Id = 1, Name = "22E" },
-      new { Id = 2, Name = "22H" }
-    );
-    modelBuilder.Entity<GasMeterReading>()
-      .Property(e => e.Type)
+    modelBuilder.Entity<User>()
+      .Property(e => e.MeterReadingType)
       .HasConversion<string>();
+    modelBuilder.Entity<User>().HasData(
+      new { Id = 1, Name = "22E", MeterReadingType = MeterReadingType.Primary },
+      new { Id = 2, Name = "22H", MeterReadingType = MeterReadingType.Secondary }
+    );
+    modelBuilder.Entity<GasMeterReading>();
     modelBuilder.Entity<GasMeterReading>().HasData(
-      new { Id = 1, Type = MeterReadingType.Primary, Reading = 703, UserId = 1, Date = new DateOnly(2025, 1, 1) },
-      new { Id = 2, Type = MeterReadingType.Secondary, Reading = 299, UserId = 2, Date = new DateOnly(2025, 1, 1) }
+      new { Id = 1, PrimaryReading = 0, SecondaryReading = 0, Date = new DateOnly(2024, 12, 1) },
+      new { Id = 2, PrimaryReading = 299, SecondaryReading = 703, Date = new DateOnly(2025, 1, 1) }
     );
     modelBuilder.Entity<UserBill>();
   }

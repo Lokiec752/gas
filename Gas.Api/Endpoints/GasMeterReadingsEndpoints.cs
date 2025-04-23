@@ -15,7 +15,7 @@ public static class GasMeterReadingsEndpoints
     var group = app.MapGroup("/readings").WithParameterValidation();
 
     group.MapGet("/", async (GasCalculationsDbContext ctx) =>
-      await ctx.Readings.Select(reading => reading.toDto()).AsNoTracking().ToListAsync()
+      await ctx.Readings.Select(reading => reading.ToDto()).AsNoTracking().ToListAsync()
     );
 
     group.MapGet("/{id}", async (int id, GasCalculationsDbContext ctx) =>
@@ -25,16 +25,16 @@ public static class GasMeterReadingsEndpoints
       {
         return Results.NotFound();
       }
-      return Results.Ok(existingReading.toDto());
+      return Results.Ok(existingReading.ToDto());
     }).WithName(ReadingsEndpointName);
 
     group.MapPost("/{id}", async (int id, CreateGasMeterReadingDto newReading, GasCalculationsDbContext ctx) =>
     {
-      GasMeterReading reading = newReading.toEntity();
+      GasMeterReading reading = newReading.ToEntity();
       ctx.Readings.Add(reading);
       await ctx.SaveChangesAsync();
 
-      return Results.CreatedAtRoute(ReadingsEndpointName, new { id = reading.Id }, reading.toDto());
+      return Results.CreatedAtRoute(ReadingsEndpointName, new { id = reading.Id }, reading.ToDto());
     });
 
     group.MapPut("/{id}", async (int id, UpdateGasMeterReadingDto newReading, GasCalculationsDbContext ctx) =>
@@ -44,7 +44,7 @@ public static class GasMeterReadingsEndpoints
       {
         return Results.NotFound();
       }
-      GasMeterReading reading = newReading.toEntity(id);
+      GasMeterReading reading = newReading.ToEntity(id);
       ctx.Entry(existingReading).CurrentValues.SetValues(reading);
       await ctx.SaveChangesAsync();
 
