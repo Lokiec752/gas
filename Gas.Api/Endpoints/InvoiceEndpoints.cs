@@ -42,39 +42,55 @@ public static class InvoiceEndpoints
 
     group.MapPost("/register", async (InvoiceRegistrationDto registration, GasCalculationsDbContext ctx, BillingService billingService) =>
     {
-      // create and add an invoice entity
-      Invoice invoice = registration.Invoice.ToEntity();
-      await ctx.Invoices.AddAsync(invoice);
+      // Start an explicit transaction
+      using var transaction = await ctx.Database.BeginTransactionAsync();
 
-      // create and add readings entities
-      GasMeterReading newReadings = registration.Reading.ToEntity();
-      await ctx.Readings.AddAsync(newReadings);
-
-      // Save to generate IDs for invoice and readings
-      await ctx.SaveChangesAsync();
-
-      // compute the previous readings date
-      DateOnly previousDate = invoice.Date.AddMonths(-1);
-
-      // find previous reading - use FirstOrDefaultAsync to avoid issues with multiple readings
-      GasMeterReading? previousReading = await ctx.Readings
-        .Where(reading => reading.Date.Year == previousDate.Year && reading.Date.Month == previousDate.Month)
-        .FirstOrDefaultAsync();
-
-      if (previousReading == null)
+      try
       {
-        return Results.Problem("Couldn't find the previous reading");
+        // create and add an invoice entity
+        Invoice invoice = registration.Invoice.ToEntity();
+        await ctx.Invoices.AddAsync(invoice);
+
+        // create and add readings entities
+        GasMeterReading newReadings = registration.Reading.ToEntity();
+        await ctx.Readings.AddAsync(newReadings);
+
+        // Save to generate IDs for invoice and readings
+        await ctx.SaveChangesAsync();
+
+        // compute the previous readings date
+        DateOnly previousDate = invoice.Date.AddMonths(-1);
+
+        // find previous reading - use FirstOrDefaultAsync to avoid issues with multiple readings
+        GasMeterReading? previousReading = await ctx.Readings
+          .Where(reading => reading.Date.Year == previousDate.Year && reading.Date.Month == previousDate.Month)
+          .FirstOrDefaultAsync();
+
+        if (previousReading == null)
+        {
+          return Results.Problem("Couldn't find the previous reading");
+        }
+
+        // get bills from the service
+        // TODO: user id's are hardcoded, TBC
+        UserBillResult bills = billingService.CreateUserBill(invoice, newReadings, previousReading, 1, 2);
+
+        await ctx.UserBills.AddRangeAsync(bills.PrimaryBill, bills.SecondaryBill);
+
+        // Save the bills separately
+        await ctx.SaveChangesAsync();
+
+        // Commit the transaction if everything succeeds
+        await transaction.CommitAsync();
+
+        return Results.Ok(bills);
       }
-
-      // get bills from the service
-      // TODO: user id's are hardcoded, TBC
-      UserBillResult bills = billingService.CreateUserBill(invoice, newReadings, previousReading, 1, 2);
-
-      await ctx.UserBills.AddRangeAsync(bills.PrimaryBill, bills.SecondaryBill);
-
-      // Save the bills separately
-      await ctx.SaveChangesAsync();
-      return Results.Ok(bills);
+      catch (Exception ex)
+      {
+        // Rollback the transaction if any exception occurs
+        await transaction.RollbackAsync();
+        return Results.Problem($"Transaction failed and was rolled back. Error: {ex.Message}");
+      }
     });
 
     group.MapPut("/{id}", async (int id, UpdateInvoiceDto updatedInvoice, GasCalculationsDbContext ctx) =>
