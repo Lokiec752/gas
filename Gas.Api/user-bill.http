@@ -1,0 +1,32 @@
+###
+GET http://localhost:5246/user-bill
+
+###
+GET http://localhost:5246/user-bill/1
+
+###
+POST http://localhost:5246/user-bill/1
+Content-Type: application/json
+
+{
+  "UserId": 1,
+  "Amount": 350.25,
+  "Date": "2025-01-01",
+  "IsPaid": false,
+  "Description": "January 2025 Gas Bill"
+}
+
+###
+PUT http://localhost:5246/user-bill/1
+Content-Type: application/json
+
+{
+  "UserId": 1,
+  "Amount": 350.25,
+  "Date": "2025-01-01",
+  "IsPaid": true,
+  "Description": "January 2025 Gas Bill - Paid"
+}
+
+###
+DELETE http://localhost:5246/user-bill/2

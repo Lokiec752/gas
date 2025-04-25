@@ -1,0 +1,30 @@
+###
+GET http://localhost:5246/readings
+
+###
+GET http://localhost:5246/readings/1
+
+###
+POST http://localhost:5246/readings/1
+Content-Type: application/json
+
+{
+  "UserId": 1,
+  "Value": 8756.5,
+  "Date": "2025-01-01",
+  "Notes": "Regular monthly reading"
+}
+
+###
+PUT http://localhost:5246/readings/1
+Content-Type: application/json
+
+{
+  "UserId": 1,
+  "Value": 8756.5,
+  "Date": "2025-01-01",
+  "Notes": "Corrected reading value"
+}
+
+###
+DELETE http://localhost:5246/readings/3

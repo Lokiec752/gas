@@ -1,6 +1,5 @@
 using Gas.Api.Data;
 using Gas.Api.Dto;
-using Gas.Api.Dto.GasMeterReading;
 using Gas.Api.Entity;
 using Gas.Api.Mapping;
 using Gas.Api.Services;
@@ -41,22 +40,26 @@ public static class InvoiceEndpoints
       return Results.CreatedAtRoute(InvoiceEndpointName, new { id = invoice.Id }, invoice.ToDto());
     });
 
-    group.MapPost("/register", async (CreateInvoiceDto newInvoice, GasMeterReadingDto readings, GasCalculationsDbContext ctx, BillingService billingService) =>
+    group.MapPost("/register", async (InvoiceRegistrationDto registration, GasCalculationsDbContext ctx, BillingService billingService) =>
     {
       // create and add an invoice entity
-      Invoice invoice = newInvoice.ToEntity();
+      Invoice invoice = registration.Invoice.ToEntity();
       await ctx.Invoices.AddAsync(invoice);
 
       // create and add readings entities
-      GasMeterReading newReadings = readings.ToEntity();
+      GasMeterReading newReadings = registration.Reading.ToEntity();
       await ctx.Readings.AddAsync(newReadings);
+
+      // Save to generate IDs for invoice and readings
+      await ctx.SaveChangesAsync();
 
       // compute the previous readings date
       DateOnly previousDate = invoice.Date.AddMonths(-1);
 
-      // find previous reading
+      // find previous reading - use FirstOrDefaultAsync to avoid issues with multiple readings
       GasMeterReading? previousReading = await ctx.Readings
-        .SingleOrDefaultAsync(reading => reading.Date.Year == previousDate.Year && reading.Date.Month == previousDate.Month);
+        .Where(reading => reading.Date.Year == previousDate.Year && reading.Date.Month == previousDate.Month)
+        .FirstOrDefaultAsync();
 
       if (previousReading == null)
       {
@@ -69,6 +72,7 @@ public static class InvoiceEndpoints
 
       await ctx.UserBills.AddRangeAsync(bills.PrimaryBill, bills.SecondaryBill);
 
+      // Save the bills separately
       await ctx.SaveChangesAsync();
       return Results.Ok(bills);
     });

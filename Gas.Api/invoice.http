@@ -29,4 +29,23 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:5246/invoices/1
+DELETE http://localhost:5246/invoices/2
+
+###
+POST http://localhost:5246/invoices/register
+Content-Type: application/json
+
+{
+  "invoice": {
+    "GasAmount": 2507.22,
+    "Subscription": 12.8,
+    "ConstDistribution": 129.84,
+    "VariableDistribution": 408.57,
+    "Date": "2025-02-01"
+  },
+  "reading": {
+    "Date": "2025-02-01",
+    "PrimaryReading": 1606,
+    "SecondaryReading": 699
+  }
+}
