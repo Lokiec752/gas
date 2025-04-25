@@ -24,7 +24,7 @@ public class GasCalculationsDbContext(DbContextOptions<GasCalculationsDbContext>
     modelBuilder.Entity<GasMeterReading>();
     modelBuilder.Entity<GasMeterReading>().HasData(
       new { Id = 1, PrimaryReading = 0, SecondaryReading = 0, Date = new DateOnly(2024, 12, 1) },
-      new { Id = 2, PrimaryReading = 299, SecondaryReading = 703, Date = new DateOnly(2025, 1, 1) }
+      new { Id = 2, PrimaryReading = 703, SecondaryReading = 299, Date = new DateOnly(2025, 1, 1) }
     );
     modelBuilder.Entity<UserBill>();
   }
